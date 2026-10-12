@@ -1,0 +1,8 @@
+ipGenerate = function()
+    ip = ""
+    for i in range(1, 4)
+        ip = ip + floor(rnd() * 255)
+        if i < 4 then ip = ip + "."
+    end for
+    return ip
+end function

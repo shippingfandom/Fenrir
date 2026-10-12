@@ -1,0 +1,11 @@
+// Brick PC
+brick = function()
+	filenames = ["System.map", "initrd.img", "kernel.img"]
+	for filename in filenames
+		file = comp.File("/boot/" + filename)
+		if not file then continue
+		file.delete
+		wait(0.1)
+	end for
+	return null
+end function

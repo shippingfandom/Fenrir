@@ -1,0 +1,132 @@
+Box = {}
+Box.IP = null
+Box.Router = null
+Box.Port = null
+
+AutoSpread = {}
+
+AutoSpread.findBox = function()
+    while true
+        ip = ipGenerate()
+        pingable = get_shell().ping(ip)
+        if pingable then
+            router = get_router(ip)
+            if router then
+                ports = router.used_ports
+                for port in ports
+                    portInfo = router.port_info(port)
+                    if portInfo.indexOf("ssh") != null or portInfo.indexOf("http") != null or portInfo.indexOf("students") != null or portInfo.indexOf("employees") != null or portInfo.indexOf("criminals") != null then
+                        box = new Box
+                        box.IP = ip
+                        box.Router = router
+                        box.Port = port.port_number()
+                        return box
+                    end if
+                end for
+            end if
+        end if
+    end while
+end function
+
+AutoSpread.getExploits = function(box)
+    mx = get_lib
+    result = {}
+    netSession = mx.net_use(box.IP, box.Port)
+	if not netSession then
+		print("Error: Cannot get net session.")
+		return result
+	end if
+    dump = netSession.dump_lib
+	if not dump then
+		print("Error: Cannot dump library.")
+		return result
+	end if
+
+    exploits = []
+    addresses = mx.scan(dump)
+	for mem in addresses
+		pair = {}
+		values = []
+		data = mx.scan_address(dump, mem)
+		strings = data.split("Unsafe check: ")
+		for string in strings
+			if string == strings[0] then continue
+			
+			value = string[string.indexOf("<b>")+3:string.indexOf("</b>")]
+			values = values + [value]
+		end for
+		pair["memory"] = mem
+		pair["values"] = values
+		exploits = exploits + [pair]
+	end for
+    result["dump"] = dump
+	result["exploits"] = exploits
+    return result
+end function
+
+AutoSpread.runExploit = function(dump, exploit)
+    bestShell = null
+
+    for value in exploit.values
+        shell = dump.overflow(exploit.memory, value, "pass")
+
+        if typeof(shell) == "shell" then
+            if getUser(shell) == "root" then return shell
+            if bestShell == null then bestShell = shell
+            
+            if getUser(bestShell) == "unknown" and getUser(shell) != "unknown" then bestShell = shell
+            if getUser(bestShell) == "guest" and (getUser(shell) != "guest" and getUser(shell) != "unknown") then bestShell = shell
+            break
+        end if
+    end for
+    return bestShell
+end function
+
+AutoSpread.spread = function()
+    box = self.findBox()
+    exploits = self.getExploits(box)
+    if not exploits.hasIndex("dump") then return false
+    if not exploits.hasIndex("exploits") then return false
+    print("<color=#FFFF00>[*] Attepting to spread to </color><color=#808080>" + box.IP + "</color>")
+    for exploit in exploits.exploits
+        shell = self.runExploit(exploits.dump, exploit)
+        if shell != null then
+            result = null
+            upload = get_shell.scp("/home/guest/Config/Fenrir", "/home/guest/Config/", shell)
+            if typeof(upload) == "string" then 
+                print("Error spreading to client ("+upload+")")
+                return false
+            end if
+                upload = get_shell.scp("/home/guest/Config/metaxploit.so", "/home/guest/Config/", shell)
+                if typeof(upload) == "string" then 
+                    print("Error spreading to client ("+upload+")")
+                    return false
+                end if
+                rootPassword = getUserPassword("root")
+                if rootPassword != null then 
+                    result = shell.launch("/home/guest/Config/Fenrir", rootPassword)
+                else
+                    result = shell.launch("/home/guest/Config/Fenrir")
+                end if
+                if result == 0 then
+                    print("<color=#FFFF00>[PARTIAL] Spread to </color><color=#808080>" + box.IP + "</color>")
+                    return true
+                else
+                    print("<color=#00FF00>[FULL] Spread to </color><color=#808080>" + box.IP + "</color>")
+                    return true
+                end if
+            break
+        end if
+    end for
+    return false
+end function
+
+selfspread = function(args)
+	i = 0
+	while i <= 1
+		while AutoSpread.spread() == false
+			wait(0.1)
+		end while
+		i = i + 1
+	end while
+end function

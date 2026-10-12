@@ -1,0 +1,2 @@
+// Check if root
+if active_user != "root" then exit("You must run as root.")

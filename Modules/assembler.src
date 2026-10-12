@@ -1,0 +1,5 @@
+/////////////////////////
+// Fenrir Assembler
+/////////////////////////
+import_code("/root/Fenrir.src")
+print("Assembling Fenrir...")

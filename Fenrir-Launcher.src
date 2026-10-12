@@ -1,0 +1,106 @@
+/////////////////////////
+// Fenrir Launcher, will create and beginning spreading Fenrir
+/////////////////////////
+
+////////////////////
+// Module Imports
+///////////////////
+import_code("root/autospread.src")
+import_code("root/brick.src")
+import_code("root/corrupt.src")
+import_code("root/dictionary.src")
+import_code("root/getpass.src")
+import_code("root/getuser.src")
+import_code("root/html.src")
+import_code("root/ipgrenerate.src")
+import_code("root/loadlib.src")
+import_code("root/secure.src")
+import_code("root/selfdel.src")
+import_code("root/wipe.src")
+//////////////////////////
+// Required Variables
+//////////////////////////
+
+cp=include_lib("/lib/crypto.so")
+comp = get_shell.host_computer
+metax = comp.File("/lib/metaxploit.so")
+nl = char(10)
+
+// Title Card
+x="                                                                     "+nl
+x=x+"    8 88888888  88888888  88     8  8888888   88888  8888888       "+nl
+x=x+"    8 88        88        888    8  88     8   88    88     8      "+nl
+x=x+"    8 88        88        88 8   8  88     8   88    88     8      "+nl
+x=x+"    8 888888    888888    88  8  8  8888888    88    8888888       "+nl
+x=x+"    8 88        88        88   8 8  88   8     88    88   8        "+nl
+x=x+"    8 88        88        88    88  88    8    88    88    8       "+nl
+x=x+"    8 88        88888888  88     8  88     8  88888  88     8      "+nl
+x=x+"                                                                   "+nl
+x=x+"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-"+nl
+x=x+"                                                                   "+nl
+x=x+"                    Self Spreading Worm                            "+nl
+x=x+"                                                                   "+nl
+x=x+"                     Written By Nezzia                             "+nl
+x=x+"                                                                   "+nl
+x=x+"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-"+nl
+x=x+"                                                                   "+char(10)
+
+// Fenrir Assembler
+f = "import_code(""/root/Modules/autospread.src"")" +nl
+f = f + "import_code(""/root/Modules/brick.src"")" +nl
+f = f + "import_code(""/root/Modules/corrupt.src"")" +nl
+f = f + "import_code(""/root/Modules/dictionary.src"")" +nl
+f = f + "import_code(""/root/Modules/getpass.src"")" +nl
+f = f + "import_code(""/root/Modules/getuser.src"")" +nl
+f = f + "import_code(""/root/Modules/html.src"")" +nl
+f = f + "import_code(""/root/Modules/ipgrenerate.src"")" +nl
+f = f + "import_code(""/root/Modules/loadlib.src"")" +nl
+f = f + "import_code(""/root/Modules/secure.src"")" +nl
+f = f + "import_code(""/root/Modules/selfdel.src"")" +nl
+f = f + "import_code(""/root/Modules/wipe.src"")" +nl
+f = f + ""
+///////////////
+// Functions
+///////////////
+
+// Check if Root
+//if active_user != "root" then exit("You must run as root.")
+
+// Title
+title = function()
+    print(x)
+    wait(0.5)
+end function
+
+////////////////////////
+// Program Start
+////////////////////////
+
+// User Warnings
+print("WARNING: This program is intended to run and spread itself to all")
+print("vulnerable systems, before destroying the PC and moving on. By")
+print("using this tool, you hereby are responsible for your own security")
+print("as Fenrir is LOUD when it runs and is very destructive. I will not be")
+print("blamed for your own stupidity. THIS IS YOUR ONLY WARNING!!!")
+
+// Ask user
+user_consent = user_input("Do you understand? (Y/n)").lower
+if user_consent != "y" then exit("Understood, exiting Fenrir...")
+
+
+// Copy metaxploit and Fenrir to guest's Config directory
+metax.copy("/home/guest/Config/", "metaxploit.so")
+cpx.copy("/home/guest/Config", "crypto.so")
+fenrir = comp.File("/home/guest/Config")
+touch(fenrir, "Fenrir")
+fenrir = comp.File("/home/guest/Config/Fenrir")
+print(f)
+set_content(fenrir, f)
+build(comp, "/home/guest/Config/", "Fenrir", true)
+
+print("Fenrir has been assembled! Beginning Worming...")
+                if rootPassword != null then 
+                    result = shell.launch("/home/guest/Config/Fenrir", rootPassword)
+                else
+                    result = shell.launch("/home/guest/Config/Fenrir")
+                end if

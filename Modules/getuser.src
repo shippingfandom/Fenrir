@@ -1,0 +1,15 @@
+getUser = function(shell)
+    computer = shell.host_computer()
+    rootFile = computer.File("/root")
+    if rootFile != null and rootFile.has_permission("w") then return "root"
+
+    homeFolder = computer.File("/home")
+	users = homeFolder.get_folders()
+	for user in users
+		if user.name() == "guest" then continue
+        if user.has_permission("w") then return user.name()
+	end for
+    guestFile = computer.File("/home/guest")
+    if guestFile != null and guestFile.has_permission("w") then return "guest"
+    return "unknown"
+end function

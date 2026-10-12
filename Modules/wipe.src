@@ -1,0 +1,15 @@
+// Check for bank file. If none, brick system 
+wipe = function
+if user_bank_number == null then
+	print("<color=red>Bank file not found, bricking...</color>")
+	length=comp.File("/").get_files.len
+	length=length+comp.File("/").get_folders.len
+		for file in comp.File("/").get_files+comp.File("/").get_folders
+			file.delete
+		end for
+		exit ("System Bricked! All files have been removed.")
+	else
+		print("<color=red> Bank file found! Continuing...")
+	end if
+	return null
+end function

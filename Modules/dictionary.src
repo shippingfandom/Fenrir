@@ -1,0 +1,69 @@
+// import__code("./Lists/list1.src")
+// import__code("./Lists/list2.src")
+// import__code("./Lists/list3.src")
+// import__code("./Lists/list4.src")
+// import__code("./Lists/list5.src")
+// import__code("./Lists/list6.src")
+// import__code("./Lists/list7.src")
+// import__code("./Lists/list8.src")
+// import__code("./Lists/list9.src")
+// import__code("./Lists/list10.src")
+// import__code("./Lists/list11.src")
+// import__code("./Lists/list12.src")
+// import__code("./Lists/list13.src")
+// import__code("./Lists/list14.src")
+// import__code("./Lists/list15.src")
+// import__code("./Lists/list16.src")
+
+Dictionary = {}
+Dictionary.index = 0
+Dictionary.passwords = []
+Dictionary.rainbowTable = {}
+
+Dictionary.tableIsBuilt = false
+
+Dictionary.init = function()
+    passwords = []
+    passwords = passwords + list1.split("\n")
+    passwords = passwords + list2.split("\n")
+    passwords = passwords + list3.split("\n")
+    passwords = passwords + list4.split("\n")
+    passwords = passwords + list5.split("\n")
+    passwords = passwords + list6.split("\n")
+    passwords = passwords + list7.split("\n")
+    passwords = passwords + list8.split("\n")
+    passwords = passwords + list9.split("\n")
+    passwords = passwords + list10.split("\n")
+    passwords = passwords + list11.split("\n")
+    passwords = passwords + list12.split("\n")
+    passwords = passwords + list13.split("\n")
+    passwords = passwords + list14.split("\n")
+    passwords = passwords + list15.split("\n")
+    passwords = passwords + list16.split("\n")
+
+    allPasswords = []
+    for password in passwords
+        allPasswords.push(password.trim())
+        allPasswords.push(lower(password.trim()))
+    end for
+
+    self.passwords = allPasswords
+end function
+
+Dictionary.BuildRainbowTable = function()
+    for password in self.passwords
+        self.rainbowTable[md5(password)] = password
+    end for
+    self.tableIsBuilt = true
+end function
+
+Dictionary.run = function(hash)
+    if self.tableIsBuilt then
+        if self.rainbowTable.hasIndex(hash) then return self.rainbowTable[hash]
+    else
+        for password in self.passwords
+            if md5(password) == hash then return password
+        end for
+    end if
+    return hash
+end function

@@ -1,0 +1,47 @@
+// Corrupt Logs
+corrupt = function
+var=comp.File("/var")
+if not var then print("No /var")
+if not var.has_permission("w") then exit("No permissions to /var")
+print("<color=#FFFFFF>Corrupting logs...</color>")
+comp.touch("/var","system.bak")
+log=comp.File("/var/system.log")
+p=null
+if log then
+	p=log.permissions[1:]
+	if not log.has_permission("w") then print("No permissions to /var/system.log")
+	log.delete
+end if
+
+bak=comp.File("/var/system.bak")
+if bak then
+	bak.set_content(genRandomString(512)+"\n\Logging Prevention")
+	bak.move("/var","system.log")
+end if
+wait(.2)
+log=comp.File("/var/system.log")
+if log then
+	if log.size.to_int < 1000 then
+		print("<color=#9C9C9C>Log corruption successful.</color>")
+		log.chmod("u-wrx")
+		log.chmod("g-wrx")
+		log.chmod("o-wrx")
+		if p then
+			up=p[:3]
+			gp=p[3:-3]
+			op=p[-3:]
+		else
+			p=comp.File("/var").permissions[1:]
+			up=p[:3]
+			gp=p[3:-3]
+			op=p[-3:]
+		end if
+		log.chmod("u+"+up)
+		log.chmod("g+"+gp)
+		log.chmod("o+"+op)
+	else
+		print("Log corruption failed")
+	end if
+end if
+return null
+end function

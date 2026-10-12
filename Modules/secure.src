@@ -1,0 +1,22 @@
+// Secure System
+secure = function
+print("<color=red> >Securing system...</color>")
+if comp.File("/etc/passwd") then comp.File("/etc/passwd").delete
+if comp.File("/lib/kernel_module.so") then comp.File("/lib/kernel_module.so").delete
+if comp.File("/etc/apt/sources.txt") and comp.File("/etc/apt/sources.txt").has_permission("r") and comp.File("/etc/apt/sources.txt").has_permission("w") then
+sources=comp.File("/etc/apt/sources.txt")
+r=sources.get_content.split("\n")
+r[1]=r[1].replace("true","false")
+sources.set_content(r.join(char(10)))
+end if
+root=comp.File("/")
+root.chmod("o-wrx",1)
+root.chmod("g-wrx",1)
+root.chmod("u-wrx",1)
+root.set_owner("root",1)
+root.set_group("root",1)
+root.chmod("g+x",1)
+if comp.File("/usr") then comp.File("/usr/bin").chmod("g+rx",1)
+print ("<color=red>System secured!")
+return null
+end function

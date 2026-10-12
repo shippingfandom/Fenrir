@@ -1,0 +1,8 @@
+// Delete current program location
+self_del = function
+file = comp.File(program_path)
+if not file then print("Fenrir location doesn't exist anymore.")
+file.delete
+print("Fenrir deleted!")
+return null
+end function
